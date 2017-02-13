@@ -14,9 +14,8 @@
 volatile static uint32_t adc_val = 0;
 
 void ADC1Seq3_IRQHandler(void){
-	 //GPIOF->DATA |= (1u << 3);
 	 adc_val = ADC1->SSFIFO3;
-	 ADC1->ISC = (1u << 3); //Remember that whenever a sample conversion is complete, INR3 is set so by doing this we clear it simply telling the interrupt to continue checking
+	 ADC1->ISC = (1u << 3); 
 }
 
 #define LED_GREEN (1u << 3)
@@ -71,20 +70,17 @@ int main(void) {
 	//step 7. Enable the sample seq  on
     ADC1->ISC = (1u << 3); //Interrupt Status and Clear. This bit is cleared by writing a 1. Clearing this bit also clears the INR3 (Raw Interrupt Status) bit in the ADCRIS register which says conversion complete
 
-   NVIC_EnableIRQ( ADC1SS3_IRQn); //Enable interrupt request for sequence sampler 3
+    NVIC_EnableIRQ( ADC1SS3_IRQn); //Enable interrupt request for sequence sampler 3
 
-  // __enable_irq();
 	while(1){
-		//ADCSeq3_IRQHandler();
-		//GPIOF->DATA |= (1u << 3);
-		//adc_val = ADC1->SSFIFO3;
+	
 		if(adc_val > 2048)
 		{
 			GPIOF->DATA_Bits[LED_GREEN] = LED_GREEN; //turn LED on
 		}
 		else
 		{
-			//GPIOF->DATA_Bits[LED_GREEN] = 0x0; //turn LED off
+			GPIOF->DATA_Bits[LED_GREEN] = 0x0; //turn LED off
 		}
 
 	}
