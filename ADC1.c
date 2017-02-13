@@ -14,8 +14,9 @@
 volatile static uint32_t adc_val = 0;
 
 void ADC1Seq3_IRQHandler(void){
+	 //GPIOF->DATA |= (1u << 3);
 	 adc_val = ADC1->SSFIFO3;
-	 ADC1->ISC = (1u << 3); 
+	 ADC1->ISC = (1u << 3); //Remember that whenever a sample conversion is complete, INR3 is set so by doing this we clear it simply telling the interrupt to continue checking
 }
 
 #define LED_GREEN (1u << 3)
@@ -37,7 +38,6 @@ int main(void) {
 	GPIOF->AFSEL  &= ~LED_GREEN; //disable alternate function we wanna use digital
 	GPIOF->DIR    = 0xFF; //enable as output
 	GPIOF->DEN    = 0xFF; //enable digital functionality
-	GPIOF->DATA |= (1u << 3);
     /************************************/
 
 	//step 3. Set the GPIO AFSEL bits for the ADC input pins (see page 671). To determine which GPIOs to configure, see Table 23-4 on page 1344.
@@ -75,14 +75,16 @@ int main(void) {
 
   // __enable_irq();
 	while(1){
-		
+		//ADCSeq3_IRQHandler();
+		//GPIOF->DATA |= (1u << 3);
+		//adc_val = ADC1->SSFIFO3;
 		if(adc_val > 2048)
 		{
-			GPIOF->DATA_Bits[LED_GREEN] = LED_GREEN; //turn test LED on
+			GPIOF->DATA_Bits[LED_GREEN] = LED_GREEN; //turn LED on
 		}
 		else
 		{
-			GPIOF->DATA_Bits[LED_GREEN] = 0x0; //turn test LED off
+			//GPIOF->DATA_Bits[LED_GREEN] = 0x0; //turn LED off
 		}
 
 	}
